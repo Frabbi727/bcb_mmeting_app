@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "dart-flutter": {
+      "command": "dart",
+      "args": [
+        "mcp-server"
+      ]
+    }
+  }
+}
