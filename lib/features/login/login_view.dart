@@ -58,21 +58,29 @@ class LoginView extends GetView<LoginController> {
                 const SizedBox(height: AppDimens.paddingL),
                 
                 // Password Field
-                TextFormField(
+                Obx(() => TextFormField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
+                  obscureText: controller.obscurePassword.value,
+                  decoration: InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock_open_outlined),
-                    border: OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.lock_open_outlined),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        controller.obscurePassword.value
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                      onPressed: controller.toggleObscurePassword,
+                    ),
+                    border: const OutlineInputBorder(),
                   ),
-                  obscureText: true,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter password';
                     }
                     return null;
                   },
-                ),
+                )),
                 const SizedBox(height: AppDimens.paddingL),
                 
                 // Error Display

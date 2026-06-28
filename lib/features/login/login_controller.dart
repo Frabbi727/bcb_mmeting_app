@@ -13,6 +13,11 @@ class LoginController extends GetxController {
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxBool obscurePassword = true.obs;
+
+  void toggleObscurePassword() {
+    obscurePassword.value = !obscurePassword.value;
+  }
 
   Future<void> login(String email, String password) async {
     // Local developer fallback for showcase / offline testing
