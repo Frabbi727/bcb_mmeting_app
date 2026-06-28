@@ -11,7 +11,10 @@ class SetMeetingView extends GetView<SetMeetingController> {
     final formKey = GlobalKey<FormState>();
     final titleController = TextEditingController();
     final dateController = TextEditingController();
+    final timeController = TextEditingController();
+    
     DateTime? selectedDate;
+    TimeOfDay? selectedTime;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -73,6 +76,34 @@ class SetMeetingView extends GetView<SetMeetingController> {
                   return null;
                 },
               ),
+              const SizedBox(height: AppDimens.paddingL),
+
+              // Time picker field
+              TextFormField(
+                controller: timeController,
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Meeting Time',
+                  prefixIcon: Icon(Icons.access_time),
+                  border: OutlineInputBorder(),
+                ),
+                onTap: () async {
+                  final picked = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (picked != null && context.mounted) {
+                    selectedTime = picked;
+                    timeController.text = picked.format(context);
+                  }
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a time';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: AppDimens.paddingXL),
               
               // Status Message
@@ -102,10 +133,30 @@ class SetMeetingView extends GetView<SetMeetingController> {
                 }
                 return ElevatedButton(
                   onPressed: () {
-                    if (formKey.currentState!.validate() && selectedDate != null) {
+                    if (formKey.currentState!.validate() && selectedDate != null && selectedTime != null) {
+                      final combinedDateTime = DateTime(
+                        selectedDate!.year,
+                        selectedDate!.month,
+                        selectedDate!.day,
+                        selectedTime!.hour,
+                        selectedTime!.minute,
+                      );
+
+                      // Date Range Past check
+                      if (combinedDateTime.isBefore(DateTime.now())) {
+                        Get.snackbar(
+                          'Scheduling Error',
+                          'Cannot schedule a meeting in the past.',
+                          backgroundColor: theme.colorScheme.errorContainer,
+                          colorText: theme.colorScheme.onErrorContainer,
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                        return;
+                      }
+
                       controller.scheduleMeeting(
                         titleController.text.trim(),
-                        selectedDate!,
+                        combinedDateTime,
                       );
                     }
                   },
