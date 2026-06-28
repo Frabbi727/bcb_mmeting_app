@@ -8,4 +8,8 @@ const Map<String, String> esES = {
   TranslationKeys.retry: 'Reintentar',
   TranslationKeys.noData: 'No se cargaron datos de usuario',
   TranslationKeys.error: 'Error: @error',
+  
+  TranslationKeys.tabHome: 'Inicio',
+  TranslationKeys.tabSetMeeting: 'Agendar Reunión',
+  TranslationKeys.tabProfile: 'Perfil',
 };

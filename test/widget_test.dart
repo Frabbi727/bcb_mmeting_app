@@ -1,18 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:bcb_meeting_app/features/home/home_controller.dart';
-import 'package:bcb_meeting_app/features/home/home_repository.dart';
-import 'package:bcb_meeting_app/features/home/home_view.dart';
-import 'package:bcb_meeting_app/data/models/user_model.dart';
+import 'package:bcb_meeting_app/features/splash/splash_view.dart';
+import 'package:bcb_meeting_app/features/splash/splash_controller.dart';
 import 'package:bcb_meeting_app/data/local/local_storage.dart';
-import 'package:bcb_meeting_app/data/network/resource.dart';
+import 'package:bcb_meeting_app/data/models/user_model.dart';
 
 class MockLocalStorageService extends GetxService implements LocalStorageService {
   @override
-  Future<LocalStorageService> init() async {
-    return this;
-  }
-
+  Future<LocalStorageService> init() async => this;
+  
   @override
   String get themeMode => 'light';
   
@@ -29,13 +26,13 @@ class MockLocalStorageService extends GetxService implements LocalStorageService
   Future<void> saveLocale(String lang, String? country) async {}
 
   @override
-  String? get accessToken => 'mock_token';
+  String? get accessToken => null;
 
   @override
   Future<void> saveAccessToken(String token) async {}
 
   @override
-  String? get refreshToken => 'mock_refresh';
+  String? get refreshToken => null;
 
   @override
   Future<void> saveRefreshToken(String token) async {}
@@ -50,36 +47,32 @@ class MockLocalStorageService extends GetxService implements LocalStorageService
   Future<void> clearSession() async {}
 }
 
-class MockHomeRepository implements IHomeRepository {
-  @override
-  Future<Resource<UserModel>> fetchUserProfile(String userId) async {
-    return ResourceSuccess(UserModel(
-      id: '123',
-      name: 'Test User',
-      email: 'test@example.com',
-    ));
-  }
-}
-
 void main() {
-  testWidgets('App launches and displays home title', (WidgetTester tester) async {
+  testWidgets('SplashView displays title and navigates', (WidgetTester tester) async {
     // Inject Mock LocalStorageService
     Get.put<LocalStorageService>(MockLocalStorageService());
-
-    // Inject mock repository and controller in isolation
-    final mockRepo = MockHomeRepository();
-    Get.put<IHomeRepository>(mockRepo);
-    Get.put(HomeController(mockRepo));
-
-    // Build our view and trigger a frame.
-    await tester.pumpWidget(const GetMaterialApp(
-      home: HomeView(),
-    ));
-    await tester.pump();
-
-    // Verify that the home view renders with the correct title.
-    expect(find.text('BCB Base Project'), findsOneWidget);
     
+    // Inject SplashController
+    Get.put(SplashController());
+
+    // Build the SplashView with routes registered.
+    await tester.pumpWidget(GetMaterialApp(
+      initialRoute: '/splash',
+      getPages: [
+        GetPage(name: '/splash', page: () => const SplashView()),
+        GetPage(name: '/login', page: () => const Scaffold(body: Text('Login Page'))),
+      ],
+    ));
+
+    // Verify that the splash view displays the app title
+    expect(find.text('BCB Meeting App'), findsOneWidget);
+    
+    // Pump the timer forward by 3 seconds to complete the delayed routing task
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    // Verify that we successfully navigated to the Login Page
+    expect(find.text('Login Page'), findsOneWidget);
+
     // Clean up Get instances
     Get.reset();
   });

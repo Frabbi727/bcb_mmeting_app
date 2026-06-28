@@ -8,4 +8,8 @@ const Map<String, String> bnBD = {
   TranslationKeys.retry: 'পুনরায় চেষ্টা করুন',
   TranslationKeys.noData: 'কোন ব্যবহারকারী তথ্য পাওয়া যায়নি',
   TranslationKeys.error: 'ত্রুটি: @error',
+  
+  TranslationKeys.tabHome: 'হোম',
+  TranslationKeys.tabSetMeeting: 'মিটিং সেট করুন',
+  TranslationKeys.tabProfile: 'প্রোফাইল',
 };

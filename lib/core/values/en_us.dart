@@ -8,4 +8,8 @@ const Map<String, String> enUS = {
   TranslationKeys.retry: 'Retry',
   TranslationKeys.noData: 'No User Data Loaded',
   TranslationKeys.error: 'Error: @error',
+  
+  TranslationKeys.tabHome: 'Home',
+  TranslationKeys.tabSetMeeting: 'Set Meeting',
+  TranslationKeys.tabProfile: 'Profile',
 };
