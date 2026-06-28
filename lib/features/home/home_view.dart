@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../core/values/dimens.dart';
 import '../../core/values/translation_keys.dart';
 import 'home_controller.dart';
 
@@ -8,6 +9,7 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('BCB Base Project'),
@@ -32,10 +34,10 @@ class HomeView extends GetView<HomeController> {
               children: [
                 Text(
                   TranslationKeys.error.trParams({'error': controller.errorMessage.value}),
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: theme.colorScheme.error),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppDimens.paddingL),
                 ElevatedButton(
                   onPressed: () => controller.fetchUserProfile("123"),
                   child: Text(TranslationKeys.retry.tr),
@@ -56,23 +58,28 @@ class HomeView extends GetView<HomeController> {
             children: [
               Text(
                 TranslationKeys.welcome.trParams({'name': userData.name}),
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: theme.textTheme.headlineMedium,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimens.paddingS),
               Text(
                 TranslationKeys.email.trParams({'email': userData.email}),
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.brightness == Brightness.light ? Colors.grey[700] : Colors.grey[300],
+                ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: AppDimens.paddingHuge),
               
               // Language Settings Control
               Text(
                 TranslationKeys.changeLang.tr,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimens.paddingS),
               Wrap(
-                spacing: 12,
+                spacing: AppDimens.paddingM,
                 children: [
                   ElevatedButton(
                     onPressed: () => controller.changeLanguage('en', 'US'),
