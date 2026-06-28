@@ -1,28 +1,80 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:bcb_meeting_app/main.dart';
-import 'package:bcb_meeting_app/core/values/env_config.dart';
+import 'package:bcb_meeting_app/features/home/home_controller.dart';
+import 'package:bcb_meeting_app/features/home/home_repository.dart';
+import 'package:bcb_meeting_app/features/home/home_view.dart';
+import 'package:bcb_meeting_app/data/models/user_model.dart';
 import 'package:bcb_meeting_app/data/local/local_storage.dart';
+import 'package:bcb_meeting_app/data/network/resource.dart';
+
+class MockLocalStorageService extends GetxService implements LocalStorageService {
+  @override
+  Future<LocalStorageService> init() async {
+    return this;
+  }
+
+  @override
+  String get themeMode => 'light';
+  
+  @override
+  Future<void> saveThemeMode(String mode) async {}
+
+  @override
+  String? get languageCode => 'en';
+
+  @override
+  String? get countryCode => 'US';
+
+  @override
+  Future<void> saveLocale(String lang, String? country) async {}
+
+  @override
+  String? get accessToken => 'mock_token';
+
+  @override
+  Future<void> saveAccessToken(String token) async {}
+
+  @override
+  String? get refreshToken => 'mock_refresh';
+
+  @override
+  Future<void> saveRefreshToken(String token) async {}
+
+  @override
+  UserModel? get userInfo => null;
+
+  @override
+  Future<void> saveUserInfo(UserModel user) async {}
+
+  @override
+  Future<void> clearSession() async {}
+}
+
+class MockHomeRepository implements IHomeRepository {
+  @override
+  Future<Resource<UserModel>> fetchUserProfile(String userId) async {
+    return ResourceSuccess(UserModel(
+      id: '123',
+      name: 'Test User',
+      email: 'test@example.com',
+    ));
+  }
+}
 
 void main() {
   testWidgets('App launches and displays home title', (WidgetTester tester) async {
-    // Initialize storage for testing
-    await GetStorage.init();
-    
-    // Inject EnvConfig for testing
-    Get.put<EnvConfig>(const EnvConfig(
-      environment: Environment.development,
-      baseUrl: 'https://api.dev.example.com/v1',
-      appTitle: 'BCB App [DEV]',
-    ), permanent: true);
+    // Inject Mock LocalStorageService
+    Get.put<LocalStorageService>(MockLocalStorageService());
 
-    final localStorage = LocalStorageService();
-    await localStorage.init();
-    Get.put<LocalStorageService>(localStorage, permanent: true);
+    // Inject mock repository and controller in isolation
+    final mockRepo = MockHomeRepository();
+    Get.put<IHomeRepository>(mockRepo);
+    Get.put(HomeController(mockRepo));
 
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    // Build our view and trigger a frame.
+    await tester.pumpWidget(const GetMaterialApp(
+      home: HomeView(),
+    ));
     await tester.pump();
 
     // Verify that the home view renders with the correct title.

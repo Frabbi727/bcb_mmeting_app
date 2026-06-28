@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../data/local/local_storage.dart';
 import '../../data/models/user_model.dart';
 import '../../data/network/resource.dart';
 import 'home_repository.dart';
 
 class HomeController extends GetxController {
   final IHomeRepository _repository;
+  final LocalStorageService _storage = Get.find<LocalStorageService>();
 
   HomeController(this._repository);
 
@@ -15,7 +18,6 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Initial data fetch
     fetchUserProfile("123");
   }
 
@@ -37,5 +39,20 @@ class HomeController extends GetxController {
     }
     
     isLoading.value = false;
+  }
+
+  // Central Theme Switcher
+  void toggleTheme() {
+    final isDark = Get.isDarkMode;
+    final targetMode = isDark ? ThemeMode.light : ThemeMode.dark;
+    Get.changeThemeMode(targetMode);
+    _storage.saveThemeMode(isDark ? 'light' : 'dark');
+  }
+
+  // Central Language/Locale Switcher
+  void changeLanguage(String langCode, String? countryCode) {
+    final locale = Locale(langCode, countryCode);
+    Get.updateLocale(locale);
+    _storage.saveLocale(langCode, countryCode);
   }
 }

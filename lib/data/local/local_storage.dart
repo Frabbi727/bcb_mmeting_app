@@ -48,4 +48,24 @@ class LocalStorageService extends GetxService {
     await _box.remove(AppConstants.keyRefreshToken);
     await _box.remove(AppConstants.keyUserInfo);
   }
+
+  // Theme Mode
+  String get themeMode => _box.read<String>(AppConstants.keyThemeMode) ?? 'system';
+
+  Future<void> saveThemeMode(String mode) async {
+    await _box.write(AppConstants.keyThemeMode, mode);
+  }
+
+  // Language/Locale Settings
+  String? get languageCode => _box.read<String>(AppConstants.keyLanguageCode);
+  String? get countryCode => _box.read<String>(AppConstants.keyCountryCode);
+
+  Future<void> saveLocale(String lang, String? country) async {
+    await _box.write(AppConstants.keyLanguageCode, lang);
+    if (country != null) {
+      await _box.write(AppConstants.keyCountryCode, country);
+    } else {
+      await _box.remove(AppConstants.keyCountryCode);
+    }
+  }
 }

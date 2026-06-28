@@ -11,6 +11,13 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: const Text('BCB Base Project'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.palette),
+            tooltip: 'change_theme'.tr,
+            onPressed: () => controller.toggleTheme(),
+          )
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -23,14 +30,14 @@ class HomeView extends GetView<HomeController> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Error: ${controller.errorMessage.value}',
+                  'error'.trParams({'error': controller.errorMessage.value}),
                   style: const TextStyle(color: Colors.red),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => controller.fetchUserProfile("123"),
-                  child: const Text('Retry'),
+                  child: Text('retry'.tr),
                 ),
               ],
             ),
@@ -39,7 +46,7 @@ class HomeView extends GetView<HomeController> {
 
         final userData = controller.user.value;
         if (userData == null) {
-          return const Center(child: Text('No User Data Loaded'));
+          return Center(child: Text('no_data'.tr));
         }
 
         return Center(
@@ -47,13 +54,38 @@ class HomeView extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Welcome, ${userData.name}!',
+                'welcome'.trParams({'name': userData.name}),
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
-                'Email: ${userData.email}',
+                'email'.trParams({'email': userData.email}),
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 40),
+              
+              // Language Settings Control
+              Text(
+                'change_lang'.tr,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 12,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => controller.changeLanguage('en', 'US'),
+                    child: const Text('English'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => controller.changeLanguage('es', 'ES'),
+                    child: const Text('Español'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => controller.changeLanguage('bn', 'BD'),
+                    child: const Text('বাংলা'),
+                  ),
+                ],
               ),
             ],
           ),
